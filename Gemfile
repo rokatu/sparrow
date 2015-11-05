@@ -7,6 +7,7 @@ gem 'rake'
 gem 'sinatra'
 gem 'unicorn'
 gem 'activesupport'
+gem 'influxdb'
 
 group :test do
   gem 'rspec'
