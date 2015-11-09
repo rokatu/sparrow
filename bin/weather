@@ -1,0 +1,26 @@
+require_relative('../config/environment')
+
+influxdb = InfluxDB::Client.new(ENV['INFLUXDB_DATABASE'],
+  username: ENV['INFLUXDB_USERNAME'], password: ENV['INFLUXDB_PASSWORD'])
+
+url = "https://api.forecast.io/forecast/#{ENV['FORECASTIO_API_KEY']}/#{ENV['FORECASTIO_LOCATION']}"
+
+loop do
+
+  forecast = JSON.parse(Excon.get(url).body)
+
+  data = {
+    values: {
+      local_forecast: forecast['currently']['temperature']
+    },
+    tags: {
+      source: 'Forecast.io'
+    }
+  }
+
+  influxdb.write_point('temperature', data)
+  puts data.inspect
+
+  sleep(10*60)
+end
+
