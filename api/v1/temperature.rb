@@ -14,11 +14,10 @@ class SparrowV1 < Sinatra::Base
       data[:values][:external] = params[:external].to_f
     end
 
-    if (params[:fermenter])
-      data[:tags][:fermenter] = params[:fermenter]
-    end
-    if (params[:type])
-      data[:tags][:type] = params[:type]
+    %w(fermenter type batch).map(&:to_sym).each do |tag|
+      if (params[tag])
+        data[:tags][tag] = params[tag]
+      end
     end
 
     influxdb.write_point('temperature', data)
